@@ -58,11 +58,25 @@ class Chatroom extends React.Component {
 
     createRoom = ()=>{
         var database = firebase.database();
+        var roomName = "";
+        var out = 0;
         var roomName = prompt("Chat room name:");
-        this.setState({nowRoom: roomName});   //enter the room after creating it
-        database.ref('users/'+this.props.userName).push(roomName);
-        this.getAllRoom(this.props.userName);
-        this.getAllMessage(roomName);
+        if (roomName == "" || roomName == null){
+            return;
+        }
+        database.ref('chatRooms').once('value', (snapshot=>{
+            if (snapshot.child(roomName).exists()){   //check if this room name exists
+                alert("This room name exist. Please try another room name.");
+                out = 1;
+            }
+        })).then(()=>{
+            if (out == 1) return;
+            this.setState({nowRoom: roomName});   //enter the room after creating it
+            database.ref('users/'+this.props.userName).push(roomName);
+            database.ref('chatRooms/'+roomName).set("");
+            this.getAllRoom(this.props.userName);
+            this.getAllMessage(roomName);
+        });
     }
 
 

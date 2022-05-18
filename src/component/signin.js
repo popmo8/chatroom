@@ -40,15 +40,16 @@ class Signin extends React.Component {
         firebase.auth().createUserWithEmailAndPassword(this.state.txtEmail, this.state.txtPassword).then((result)=> {
             var name = prompt("Account name:");
             firebase.database().ref('users').once('value', (snapshot=>{
-                while(name == "" || name == null || snapshot.child(name).exists()){
-                    name = prompt("Account name used.\nAnother account name:");
+                while (name == "" || name == null || snapshot.child(name).exists()){
+                    name = prompt("Please insert again or insert another account name:");
                 }
                 this.initAccount(name);   //add user name data into "users"
+                alert("success signup");
                 return result.user.updateProfile({   //update the user name data in firebase authentication
                     displayName: name
                 })
+
             }));
-            alert("success signup");
             
         }).catch(function(error) {
             alert(error);
